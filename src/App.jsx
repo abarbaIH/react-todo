@@ -26,6 +26,36 @@ const App = () => {
     setTodos([...todos, newTodo])
   }
 
+  const updateTodo = (id) => {
+    setTodos(todos.map(todo => todo.id === id ? { ...todo, completed: !todo.completed } : todo))
+  }
+
+  const removeTodo = (id) => {
+    setTodos(todos.filter((todo) => todo.id !== id))
+  }
+
+  const computedItemsLeft = todos.filter((todo) => !todo.completed).length
+
+  const clearCompleted = () => {
+    setTodos(todos.filter((todo) => !todo.completed))
+  }
+
+  const [filter, setFilter] = useState("all")
+
+  const changeSetFilter = (filter) => setFilter(filter)
+
+  const filteredTodos = () => {
+    switch (filter) {
+      case "all":
+        return todos
+      case "active":
+        return todos.filter((todo) => !todo.completed)
+      case "completed":
+        return todos.filter((todo) => todo.completed)
+      default:
+        return todos
+    }
+  }
 
   return (
     <div className="bg-[url('./assets/images/bg-mobile-light.jpg')] bg-no-repeat bg-contain bg-gray-200 min-h-screen">
@@ -36,11 +66,11 @@ const App = () => {
 
         <TodoCreate createTodo={createTodo} />
 
-        <TodoList todos={todos} />
+        <TodoList todos={filteredTodos()} removeTodo={removeTodo} updateTodo={updateTodo} />
 
-        <TodoComputed />
+        <TodoComputed computedItemsLeft={computedItemsLeft} clearCompleted={clearCompleted} />
 
-        <TodoFilter />
+        <TodoFilter changeSetFilter={changeSetFilter} filter={filter} />
 
       </main>
 
